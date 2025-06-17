@@ -9,6 +9,7 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True
 
+
 class SoftDeleteManager(models.Manager):
     """Soft Delete manager"""
 
@@ -48,6 +49,3 @@ class SoftDeleteModel(models.Model):
 
     class Meta:
         abstract = True
-
-
-

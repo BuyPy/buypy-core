@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 admin.site.register(DeleteUserRequest)
 
+
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     model = User
@@ -50,4 +51,3 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
     )
-

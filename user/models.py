@@ -10,18 +10,19 @@ from .managers import UserManager
 class UserSoftDeleteModel(SoftDeleteModel):
 
     def hard_delete(self, *args, **kwargs):
-        #TODO add task to delete all transactions
+        # TODO add task to delete all transactions
         super().hard_delete(*args, **kwargs)
 
     def restore(self):
         super().restore()
         DeleteUserRequest.objects.filter(user=self.user).delete()
 
+    class Meta:
+        abstract = True
+
 
 class User(UserSoftDeleteModel, AbstractUser, BaseModel):
-    uuid = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False
-    )
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(max_length=255, unique=True)
     password = models.CharField(max_length=255)
 
@@ -48,7 +49,7 @@ class DeleteUserRequest(SoftDeleteModel):
 
     class Meta:
         db_table = "delete_user_requests"
-        ordering = ['scheduled_time']
+        ordering = ["scheduled_time"]
         indexes = [
             models.Index(
                 fields=["user_id", "scheduled_time"],
@@ -56,9 +57,9 @@ class DeleteUserRequest(SoftDeleteModel):
         ]
 
     def create(self, *args, **kwargs):
-        #TODO send delete email
+        # TODO send delete email
         self.create(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        #TODO send cancel delete email
+        # TODO send cancel delete email
         self.delete(*args, **kwargs)
