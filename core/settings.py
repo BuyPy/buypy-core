@@ -11,8 +11,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
-from pathlib import Path
 from datetime import timedelta
+from pathlib import Path
 
 from environs import Env
 
@@ -22,6 +22,7 @@ env.read_env(override=True)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOG_DIR = os.path.join(BASE_DIR, "logs")
+FRONTEND_URL = env.str("FRONTEND_URL")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "djoser",
     "rest_framework_simplejwt",
     "user.apps.UserConfig",
 ]
@@ -67,15 +69,51 @@ REST_FRAMEWORK = {
     ],
 }
 
-
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
     "SLIDING_TOKEN_LIFETIME": timedelta(days=30),
     "SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER": timedelta(days=1),
     "SLIDING_TOKEN_LIFETIME_LATE_USER": timedelta(days=30),
-    "SIGNING_KEY": SECRET_KEY,
+    "ALGORITHM": "EdDSA",
+    "SIGNING_KEY": Path(env.str("JWT_SIGNING_KEY")).read_text(),
+    "VERIFYING_KEY": Path(env.str("JWT_VERIFYING_KEY")).read_text(),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "ISSUER": "BuyPy-core",
+    "ROTATE_REFRESH_TOKENS": True,
 }
+
+DJOSER = {
+    "LOGIN_FIELD": "email",
+    "SEND_ACTIVATION_EMAIL": True,
+    "PASSWORD_RESET_CONFIRM_URL": FRONTEND_URL
+    + "/auth/reset-password?uid={uid}&token={token}",
+    "ACTIVATION_URL": FRONTEND_URL + "/auth/activate?uid={uid}&token={token}",
+    "LOGOUT_ON_PASSWORD_CHANGE": True,
+    "TOKEN_MODEL": None,
+    "PERMISSIONS": {
+        "activation": ["rest_framework.permissions.AllowAny"],
+        "password_reset": ["rest_framework.permissions.AllowAny"],
+        "password_reset_confirm": ["rest_framework.permissions.AllowAny"],
+        "set_password": ["djoser.permissions.CurrentUserOrAdmin"],
+        "username_reset": ["core.permissions.BlockAll"],
+        "username_reset_confirm": ["core.permissions.BlockAll"],
+        "set_username": ["core.permissions.BlockAll"],
+        "user_create": ["rest_framework.permissions.AllowAny"],
+        "user_delete": ["djoser.permissions.CurrentUserOrAdmin"],
+        "user": ["djoser.permissions.CurrentUserOrAdmin"],
+        "user_list": ["djoser.permissions.CurrentUserOrAdmin"],
+        "token_create": ["rest_framework.permissions.AllowAny"],
+        "token_destroy": ["rest_framework.permissions.IsAuthenticated"],
+    },
+    "SERIALIZERS": {
+        "user_create": "user.serializers.UserCreateSerializer",
+        "user": "user.serializers.UserSerializer",
+        "current_user": "user.serializers.UserSerializer",
+    },
+    "BLOCKED_ROUTS": ("reset_username", "reset_username_confirm", "set_username"),
+}
+
 
 ROOT_URLCONF = "core.urls"
 AUTH_USER_MODEL = "user.User"
