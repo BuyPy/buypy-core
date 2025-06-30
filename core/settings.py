@@ -87,7 +87,7 @@ DJOSER = {
     "LOGIN_FIELD": "email",
     "SEND_ACTIVATION_EMAIL": True,
     "PASSWORD_RESET_CONFIRM_URL": FRONTEND_URL
-    + "/auth/reset-password?uid={uid}&token={token}",
+                                  + "/auth/reset-password?uid={uid}&token={token}",
     "ACTIVATION_URL": FRONTEND_URL + "/auth/activate?uid={uid}&token={token}",
     "LOGOUT_ON_PASSWORD_CHANGE": True,
     "TOKEN_MODEL": None,
@@ -114,6 +114,19 @@ DJOSER = {
     "BLOCKED_ROUTS": ("reset_username", "reset_username_confirm", "set_username"),
 }
 
+TASK_EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_PORT = int(env.int('EMAIL_PORT', 25))
+EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', '')
+
+CELERY_BROKER_URL = env.str("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = env.str("CELERY_RESULT_BACKEND")
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "UTC"
+CELERY_BROKER_CONNECTION_RETRY = True
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 ROOT_URLCONF = "core.urls"
 AUTH_USER_MODEL = "user.User"
