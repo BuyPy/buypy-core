@@ -21,7 +21,7 @@ class CeleryEmailBackend(BaseEmailBackend):
             "subject": email_message.subject,
             "message": email_message.body,
             "from_email": email_message.from_email,
-            "recipient_list": email_message.recipient_list,
+            "recipient_list": email_message.recipients(),
             "fail_silently": False,
             "auth_user": None,
             "auth_password": None,
@@ -29,4 +29,4 @@ class CeleryEmailBackend(BaseEmailBackend):
             "html_message": email_message.html,
         }
 
-        send_mail_task(**mail_kwargs)
+        send_mail_task.delay(**mail_kwargs)

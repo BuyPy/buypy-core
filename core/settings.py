@@ -114,10 +114,11 @@ DJOSER = {
     "BLOCKED_ROUTS": ("reset_username", "reset_username_confirm", "set_username"),
 }
 
-TASK_EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_PORT = int(env.int('EMAIL_PORT', 25))
-EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', '')
+TASK_EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = "vendor.mail.celery_mail_backend.CeleryEmailBackend"
+EMAIL_PORT = int(env.int("EMAIL_PORT", 25))
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", "")
 
 CELERY_BROKER_URL = env.str("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = env.str("CELERY_RESULT_BACKEND")
