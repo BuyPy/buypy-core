@@ -45,8 +45,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    "djoser",
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
+    "djoser",
     "user.apps.UserConfig",
 ]
 
@@ -111,7 +112,7 @@ DJOSER = {
         "user": "user.serializers.UserSerializer",
         "current_user": "user.serializers.UserSerializer",
     },
-    "BLOCKED_ROUTS": ("reset_username", "reset_username_confirm", "set_username"),
+    "BLOCKED_ROUTS": ("users-reset-username", "users-reset-username-confirm", "users-detail"),
 }
 
 TASK_EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

@@ -28,11 +28,11 @@ router.register("users", UserViewSet, basename="users")
 DEF_BLOCKED = settings.DJOSER.get("BLOCKED_ROUTS", [])
 
 safe_patterns = [
-    p for p in router.urls if not any(b in str(p.pattern) for b in DEF_BLOCKED)
+    p for p in router.urls if not any(b in str(p.name) for b in DEF_BLOCKED)
 ]
 
 urlpatterns += [
     path("auth/", include("djoser.urls.jwt")),
-    path("auth/", include((safe_patterns, "djoser"), namespace="djoser")),
+    path("", include((safe_patterns, "djoser"), namespace="djoser")),
     path("admin/", admin.site.urls),
 ]
